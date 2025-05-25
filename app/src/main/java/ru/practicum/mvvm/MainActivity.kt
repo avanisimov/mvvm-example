@@ -7,14 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.practicum.mvvm.login.LoginScreen
+import ru.practicum.mvvm.news.NewsScreen
 import ru.practicum.mvvm.ui.theme.MVVMExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +29,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screens.Login.route) { LoginScreen(navController) }
+                        composable(Screens.News.route) { NewsScreen(navController) }
                     }
                 }
             }
@@ -40,4 +39,5 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screens(val route: String) {
     data object Login : Screens("login")
+    data object News : Screens("news")
 }

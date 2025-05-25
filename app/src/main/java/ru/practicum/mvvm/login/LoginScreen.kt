@@ -1,6 +1,7 @@
 package ru.practicum.mvvm.login
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
+import ru.practicum.mvvm.Screens
 
 @Composable
 fun LoginScreen(
@@ -51,6 +54,7 @@ fun LoginScreen(
             .fillMaxSize()
             .imePadding()
     ) {
+        val context = LocalContext.current
         val emailFocus = remember { FocusRequester() }
         val passwordFocus = remember { FocusRequester() }
         val focusManager = LocalFocusManager.current
@@ -59,6 +63,18 @@ fun LoginScreen(
 
         var passwordVisible by remember { mutableStateOf(false) }
 
+        LaunchedEffect(Unit) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is LoginUiEvent.NavigateToNews -> {
+                        navController.navigate(Screens.News.route)
+                    }
+                    is LoginUiEvent.ShowError -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
         LaunchedEffect(true) {
             delay(2000)
             emailFocus.requestFocus()
@@ -130,14 +146,6 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Войти")
-            }
-
-            if (state.error.isNotBlank()) {
-                Text(
-                    text = state.error,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
             }
         }
     }
