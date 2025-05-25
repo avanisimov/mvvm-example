@@ -55,13 +55,7 @@ fun LoginScreen(
         val passwordFocus = remember { FocusRequester() }
         val focusManager = LocalFocusManager.current
 
-        val email by viewModel.email.collectAsState()
-        val password by viewModel.password.collectAsState()
-
-        val isEmailValid by viewModel.isEmailValid.collectAsState(false)
-        val isPasswordValid by viewModel.isPasswordValid.collectAsState(false)
-        val isEnterButtonEnabled by viewModel.isEnterButtonEnabled.collectAsState(false)
-        val errorText by viewModel.error.collectAsState("")
+        val state by viewModel.state.collectAsState()
 
         var passwordVisible by remember { mutableStateOf(false) }
 
@@ -82,10 +76,10 @@ fun LoginScreen(
             )
 
             OutlinedTextField(
-                value = email,
+                value = state.email,
                 onValueChange = { viewModel.onEmailChanged(it) },
                 label = { Text("Email") },
-                isError = !isEmailValid,
+                isError = !state.isEmailValid,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Email,
@@ -99,10 +93,10 @@ fun LoginScreen(
                     .focusRequester(emailFocus)
             )
             OutlinedTextField(
-                value = password,
+                value = state.password,
                 onValueChange = { viewModel.onPasswordChanged(it)},
                 label = { Text("Пароль") },
-                isError = !isPasswordValid,
+                isError = !state.isPasswordValid,
                 singleLine = true,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -132,21 +126,19 @@ fun LoginScreen(
                     focusManager.clearFocus()
                     viewModel.enter()
                 },
-                enabled = isEnterButtonEnabled,
+                enabled = state.isEnterButtonEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Войти")
             }
 
-
-            if (errorText.isNotBlank()) {
+            if (state.error.isNotBlank()) {
                 Text(
-                    text = errorText,
+                    text = state.error,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-
         }
     }
 }
