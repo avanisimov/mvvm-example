@@ -35,6 +35,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.map
@@ -61,6 +64,9 @@ fun NewsScreen(navController: NavHostController) {
             .build()
             .create(NewsApi::class.java)
     }
+    val viewModel: NewsViewModel = viewModel(
+        factory = NewsViewModelFactory(newsApi)
+    )
     val dateFormatter = remember {
         SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM)
     }
@@ -216,6 +222,15 @@ fun NewsScreen(navController: NavHostController) {
             }
         }
 
+    }
+}
+
+class NewsViewModelFactory(
+    private val newsApi: NewsApi
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return NewsViewModel(newsApi) as T
     }
 }
 
