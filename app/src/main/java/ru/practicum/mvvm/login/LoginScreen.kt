@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,11 +37,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginViewModel = viewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -50,12 +55,13 @@ fun LoginScreen(navController: NavController) {
         val passwordFocus = remember { FocusRequester() }
         val focusManager = LocalFocusManager.current
 
-        var email by rememberSaveable { mutableStateOf("") }
-        var password by rememberSaveable { mutableStateOf("") }
+        val email by viewModel.email.collectAsState()
+        val password by viewModel.password.collectAsState()
 
-        val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        val isPasswordValid = password.length >= 6
-        val isFormValid = isEmailValid && isPasswordValid
+        val isEmailValid by viewModel.isEmailValid.collectAsState(false)
+        val isPasswordValid by viewModel.isPasswordValid.collectAsState(false)
+        val isEnterButtonEnabled by viewModel.isEnterButtonEnabled.collectAsState(false)
+        val errorText by viewModel.error.collectAsState("")
 
         var passwordVisible by remember { mutableStateOf(false) }
 
@@ -77,9 +83,9 @@ fun LoginScreen(navController: NavController) {
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { viewModel.onEmailChanged(it) },
                 label = { Text("Email") },
-                isError = email.isNotBlank() && !isEmailValid,
+                isError = !isEmailValid,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Email,
@@ -94,9 +100,9 @@ fun LoginScreen(navController: NavController) {
             )
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { viewModel.onPasswordChanged(it)},
                 label = { Text("Пароль") },
-                isError = password.isNotBlank() && !isPasswordValid,
+                isError = !isPasswordValid,
                 singleLine = true,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -124,17 +130,18 @@ fun LoginScreen(navController: NavController) {
                 onClick = {
                     // login action
                     focusManager.clearFocus()
+                    viewModel.enter()
                 },
-                enabled = isFormValid,
+                enabled = isEnterButtonEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Войти")
             }
 
 
-            if (!isFormValid && (email.isNotBlank() || password.isNotBlank())) {
+            if (errorText.isNotBlank()) {
                 Text(
-                    text = "Введите корректный email и пароль от 6 символов",
+                    text = errorText,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
