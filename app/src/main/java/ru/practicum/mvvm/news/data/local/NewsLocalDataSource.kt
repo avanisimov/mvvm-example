@@ -3,11 +3,14 @@ package ru.practicum.mvvm.news.data.local
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.practicum.mvvm.dataStore
+import javax.inject.Inject
 
-class NewsLocalDataSource(
+class NewsLocalDataSource  @Inject constructor(
+    @ApplicationContext
     private val context: Context
 ) {
 

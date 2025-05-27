@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -59,9 +60,7 @@ const val API_KEY = "9f1ad698ae07440ab94571207d6ba9cd"
 @Composable
 fun NewsScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val viewModel: NewsViewModel = viewModel(
-        factory = NewsViewModelFactory(context)
-    )
+    val viewModel: NewsViewModel = hiltViewModel()
     val dateFormatter = remember {
         SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM)
     }
@@ -174,24 +173,3 @@ fun NewsScreen(navController: NavHostController) {
         }
     }
 }
-
-class NewsViewModelFactory(
-    private val context: Context
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val newsRepository = NewsRepositoryImpl(
-            remoteDataSource = NewsRemoteDataSource(),
-            localDataSource = NewsLocalDataSource(context)
-        )
-        return NewsViewModel(
-            getArticlesUseCase =  GetArticlesUseCase(
-                newsRepository = newsRepository
-            ),
-            getSearchHistoryFlowUseCase =  GetSearchHistoryFlowUseCase(
-                newsRepository = newsRepository
-            ),
-        ) as T
-    }
-}
-

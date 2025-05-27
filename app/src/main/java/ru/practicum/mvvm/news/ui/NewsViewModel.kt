@@ -2,6 +2,7 @@ package ru.practicum.mvvm.news.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -10,8 +11,10 @@ import kotlinx.coroutines.launch
 import ru.practicum.mvvm.news.domain.GetArticlesUseCase
 import ru.practicum.mvvm.news.domain.GetSearchHistoryFlowUseCase
 import ru.practicum.mvvm.news.domain.model.NewsArticle
+import javax.inject.Inject
 
-class NewsViewModel(
+@HiltViewModel
+class NewsViewModel @Inject constructor(
     private val getArticlesUseCase: GetArticlesUseCase,
     private val getSearchHistoryFlowUseCase: GetSearchHistoryFlowUseCase,
 ) : ViewModel() {

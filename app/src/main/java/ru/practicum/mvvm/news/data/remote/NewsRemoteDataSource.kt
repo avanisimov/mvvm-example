@@ -5,8 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.practicum.mvvm.news.domain.model.NewsArticle
+import javax.inject.Inject
 
-class NewsRemoteDataSource {
+class NewsRemoteDataSource @Inject constructor() {
 
     companion object {
         const val API_KEY = "9f1ad698ae07440ab94571207d6ba9cd"

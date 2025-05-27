@@ -5,8 +5,9 @@ import ru.practicum.mvvm.news.data.local.NewsLocalDataSource
 import ru.practicum.mvvm.news.data.remote.NewsRemoteDataSource
 import ru.practicum.mvvm.news.domain.model.NewsArticle
 import ru.practicum.mvvm.news.domain.repo.NewsRepository
+import javax.inject.Inject
 
-class NewsRepositoryImpl(
+class NewsRepositoryImpl @Inject constructor(
     private val remoteDataSource: NewsRemoteDataSource,
     private val localDataSource: NewsLocalDataSource,
 ) : NewsRepository {

@@ -3,8 +3,9 @@ package ru.practicum.mvvm.news.domain
 import kotlinx.coroutines.flow.first
 import ru.practicum.mvvm.news.domain.model.NewsArticle
 import ru.practicum.mvvm.news.domain.repo.NewsRepository
+import javax.inject.Inject
 
-class GetArticlesUseCase(
+class GetArticlesUseCase @Inject constructor(
     private val newsRepository: NewsRepository
 ) {
 
